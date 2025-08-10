@@ -18,20 +18,26 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - name: Enable Pages base
         run: echo "GITHUB_PAGES=1" >> $GITHUB_ENV
+
+      # 👇 ここで Secret から .env を生成（リポジトリには残りません）
+      - name: Inject env (VITE_BACKEND_URL)
+        working-directory: ./frontend
+        run: |
+          echo "VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}" > .env
+
       - name: Install & build
         working-directory: ./frontend
         run: |
           npm ci
           npm run build
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: frontend/dist
-      - name: Inject env
-        working-directory: ./frontend
-        run: echo "VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}" > .env
 
   deploy:
     needs: build
