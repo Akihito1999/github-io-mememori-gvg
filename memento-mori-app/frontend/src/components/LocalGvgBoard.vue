@@ -19,6 +19,7 @@
     </div>
 
     <div v-if="connecting" class="loading">接続中...</div>
+    <div v-else-if="lastError" class="loading">接続できません: {{ lastError }}</div>
 
     <div v-else class="grid">
       <div
@@ -61,6 +62,7 @@ const castles = ref<any[]>([])
 const guilds = ref<Record<string, string>>({})
 const live = ref(true)
 const connecting = ref(false)
+const lastError = ref<string | null>(null)
 let sock: WebSocket | null = null
 
 function makeStreamId(castleId: number, block: number, group: number, gclass: number, world: number) {
@@ -146,8 +148,15 @@ const castleNames: Record<number, string> = {
 
 function openWs() {
   closeWs()
+  if (!props.worldId || props.worldId <= 0) {
+    lastError.value = 'ワールド番号を選択してください（全ワールドは不可）'
+    connecting.value = false
+    return
+  }
   connecting.value = true
-  const url = wsUrl('/ws/gvg')
+  lastError.value = null
+  const url = wsUrlGvg()
+  console.log('[GvG] connecting to', url)
   sock = new WebSocket(url)
   sock.binaryType = 'arraybuffer'
   sock.onopen = () => {
@@ -159,8 +168,15 @@ function openWs() {
   sock.onmessage = (ev) => {
     if (typeof ev.data !== 'string') parseMessage(ev.data)
   }
-  sock.onclose = () => { if (live.value) reconnectLater() }
-  sock.onerror = () => { /* ignore */ }
+  sock.onclose = (ev) => {
+    connecting.value = false
+    lastError.value = `WS closed (${ev.code})`
+    if (live.value) reconnectLater()
+  }
+  sock.onerror = () => {
+    connecting.value = false
+    lastError.value = 'WebSocket error'
+  }
 }
 
 let retryTimer: any = null

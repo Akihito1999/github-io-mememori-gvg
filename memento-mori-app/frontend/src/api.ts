@@ -9,6 +9,14 @@ export const api = axios.create({
   timeout: 30000,
 })
 
+// 👇 これを追加（/gvg の絶対URLを返す）
+export function wsUrlGvg() {
+  // backend があればその /ws/gvg、無ければ本家 wss://api.mentemori.icu/gvg
+  return backend
+    ? backend.replace(/^http/, 'ws') + '/ws/gvg'
+    : 'wss://api.mentemori.icu/gvg'
+}
+
 export function wsUrl(path: string) {
   // Prefer backend (Render 等) and convert to ws(s)
   if (backend) return backend.replace(/^http/, 'ws') + path
