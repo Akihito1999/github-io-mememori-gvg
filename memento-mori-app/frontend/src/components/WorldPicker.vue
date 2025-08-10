@@ -1,4 +1,3 @@
-import { ref, computed } from 'vue'
 <template>
   <div class="picker">
     <label>サーバー</label>
@@ -17,6 +16,7 @@ import { ref, computed } from 'vue'
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
 import { ref } from 'vue'
 
 const emit = defineEmits<{ (e: 'select', worldId: number): void }>()
