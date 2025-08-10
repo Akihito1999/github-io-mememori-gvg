@@ -1,3 +1,4 @@
+import { ref, computed } from 'vue'
 <template>
   <div class="picker">
     <label>サーバー</label>
