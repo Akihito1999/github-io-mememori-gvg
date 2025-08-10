@@ -19,17 +19,20 @@ jobs:
         with:
           node-version: 20
 
+      # Vite の base を効かせるためのフラグ & （自動判別版を使うなら REPO_NAME も注入）
       - name: Enable Pages base
-        run: echo "GITHUB_PAGES=1" >> $GITHUB_ENV
+        run: |
+          echo "GITHUB_PAGES=1" >> $GITHUB_ENV
+          echo "REPO_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
 
-      # 👇 ここで Secret から .env を生成（リポジトリには残りません）
+      # ✅ Secret から .env 生成（Settings > Secrets and variables > Actions に登録）
       - name: Inject env (VITE_BACKEND_URL)
-        working-directory: ./frontend
+        working-directory: ./memento-mori-app/frontend
         run: |
           echo "VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}" > .env
 
       - name: Install & build
-        working-directory: ./frontend
+        working-directory: ./memento-mori-app/frontend
         run: |
           npm ci
           npm run build
@@ -37,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: frontend/dist
+          path: memento-mori-app/frontend/dist
 
   deploy:
     needs: build
