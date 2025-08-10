@@ -1,29 +1,17 @@
-// memento-mori-app/frontend/src/api.ts
 import axios from 'axios'
 
 const backend = import.meta.env.VITE_BACKEND_URL || '' // e.g. https://your-backend.onrender.com
 
-// If no backend provided, use the public API directly (must allow CORS)
 export const api = axios.create({
   baseURL: backend || 'https://api.mentemori.icu',
   timeout: 30000,
 })
 
-// 👇 これを追加（/gvg の絶対URLを返す）
+// WebSocket(GvG)の接続先を返す（backendがあれば /ws/gvg、無ければ本家に直）
 export function wsUrlGvg() {
-  // backend があればその /ws/gvg、無ければ本家 wss://api.mentemori.icu/gvg
   return backend
     ? backend.replace(/^http/, 'ws') + '/ws/gvg'
     : 'wss://api.mentemori.icu/gvg'
-}
-
-export function wsUrl(path: string) {
-  // Prefer backend (Render 等) and convert to ws(s)
-  if (backend) return backend.replace(/^http/, 'ws') + path
-  // Fallback: same-origin
-  const loc = window.location
-  const proto = loc.protocol === 'https:' ? 'wss:' : 'ws:'
-  return `${proto}//${loc.host}${path}`
 }
 
 export async function getWorlds() {
