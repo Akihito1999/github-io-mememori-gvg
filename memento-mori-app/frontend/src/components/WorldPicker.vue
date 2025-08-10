@@ -11,7 +11,7 @@
       <option v-for="n in 300" :key="n" :value="n">W{{ n }}</option>
     </select>
 
-    <button @click="emitWorld">読み込み</button>
+    <button :disabled="world === 0" @click="emitWorld">読み込み</button>
   </div>
 </template>
 
@@ -30,7 +30,7 @@ const servers = [
 ]
 
 const server = ref(1)
-const world = ref(0)
+const world = ref(1)
 const allWorlds = computed(() => world.value === 0)
 
 function toWorldId(s: number, w: number) {

@@ -4,15 +4,20 @@
     <h1>Memento Mori — Guild Battle (Local GvG)</h1>
     <WorldPicker @select="onSelect" />
 
-    <section v-if="worldId" class="cards">
-      <article class="card">
+    <section v-if="worldId !== null" class="cards">
+      <article class="card" v-if="worldId && worldId > 0">
         <h2>Guild Battle — Castles</h2>
         <LocalGvgBoard :worldId="worldId!" />
       </article>
 
+      <!-- worldId が 0（全ワールド）のときのメッセージ -->
+      <article class="card" v-else>
+        <p>リアルタイム購読は「特定ワールド」の選択が必要です。サーバとワールド番号を選んで「読み込み」を押してください。</p>
+      </article>
+
       <article class="card">
         <h2>Player BP Ranking (sample)</h2>
-        <RankingTable :worldId="worldId!" />
+        <RankingTable :worldId="worldId ?? 0" />
       </article>
     </section>
   </main>
