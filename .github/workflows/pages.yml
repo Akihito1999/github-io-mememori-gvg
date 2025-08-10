@@ -31,6 +31,26 @@ jobs:
         run: |
           echo "VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}" > .env
 
+      # ⬇ ここが追加のデバッグ（ルートで確認）
+      - name: Debug paths & env
+        run: |
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          pwd
+          ls -la
+          ls -la memento-mori-app/frontend
+          node -v
+          npm -v
+
+      # ⬇ さらに frontend 直下でも確認（.env の中身は表示しない）
+      - name: Debug frontend dir
+        working-directory: ./memento-mori-app/frontend
+        run: |
+          pwd
+          ls -la
+          test -f package-lock.json && echo "lock exists" || echo "no lock"
+          echo "GITHUB_PAGES=$GITHUB_PAGES  REPO_NAME=$REPO_NAME"
+          # cat vite.config.ts  # 必要なら有効化
+
       - name: Install & build
         working-directory: ./memento-mori-app/frontend
         run: |
