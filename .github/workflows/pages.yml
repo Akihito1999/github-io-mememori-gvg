@@ -19,13 +19,13 @@ jobs:
         with:
           node-version: 20
 
-      # Vite の base を効かせるためのフラグ & （自動判別版を使うなら REPO_NAME も注入）
+      # Vite の base 用フラグ & repo 名の注入（自動判別版を使う場合）
       - name: Enable Pages base
         run: |
           echo "GITHUB_PAGES=1" >> $GITHUB_ENV
           echo "REPO_NAME=${{ github.event.repository.name }}" >> $GITHUB_ENV
 
-      # ✅ Secret から .env 生成（Settings > Secrets and variables > Actions に登録）
+      # ✅ Secret から .env 生成（事前に Settings > Secrets > Actions で登録）
       - name: Inject env (VITE_BACKEND_URL)
         working-directory: ./memento-mori-app/frontend
         run: |
